@@ -1,0 +1,6 @@
+{
+  "id": "chessboard",
+  "name": "Chessboard",
+  "src": "http://localhost:5000/",
+  "fieldTypes": ["Object"]
+}
