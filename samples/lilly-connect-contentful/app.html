@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Lilly Connect Contentful</title>
+    <!--
+    Include styles from the Contentful app.
+
+    See http://contentful.github.io/ui-extensions-sdk/styleguide for information on
+    how to include and apply these styles.
+     -->
+     <link rel="stylesheet" href="https://contentful.github.io/ui-extensions-sdk/cf-extension.css">
+     <style>
+      body { margin: 0; }
+      #entries { margin-top: 1em; }
+      #entries-list { margin-top: 1em; }
+      #rating { margin-right: 1em; }
+     </style>
+
+    <!--
+    Load the Extensions API that is used to communicate with the containing app.
+    -->
+    <script src="https://contentful.github.io/ui-extensions-sdk/cf-extension-api.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js">
+    </script>
+    <style>
+     body { margin: 0; }
+     #entries { margin-top: 1em; }
+     #entries-list { margin-top: 1em; }
+     #rating { margin-right: 1em; }
+    </style>
+  </head>
+  <body>
+
+    <div id="contain-collapsible-section">
+      <div class="cf-form-field">
+        <label class="cf-text-dimmed">Contain one or more content sections within a collapsible section?</label>
+        <div class="cf-form-horizontal">
+          <div class="cf-form-option">
+            <input
+              type="checkbox"
+              id="option-d"
+            />
+            <label for="option-d">Yes</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="collapsible-section">
+      <div class="cf-form-field">
+        <label class="cf-text-dimmed">COLLAPSIBLE DRAG &amp; DROP HERE</label>
+        <ul id="entries-list"></ul>
+      </div>
+    </div>
+
+    <div id="add-new-basic-content">
+      <form>
+        <label>Add New Basic Section</label>
+        <br />
+        <div class="cf-form-field">
+          <label class="cf-text-dimmed">Section Title <span class="cf-field-error">Required</span></label>
+          <input type="text" value="" class="cf-form-input" aria-invalid="true" />
+          <div class="ovHidden">
+            <div class="cf-form-hint fLeft">0 characters</div>
+            <div class="cf-form-hint fRight">Required less than 256 characters</div>
+          </div>
+        </div>
+
+        <div class="cf-form-field">
+          <label class="cf-text-dimmed">Display Title on Page?</label>
+
+          <div class="cf-form-horizontal">
+            <div class="cf-form-option">
+              <input type="radio" id="title-yes" name="display-title" />
+              <label for="title-yes">Yes</label>
+            </div>
+            <div class="cf-form-option">
+              <input type="radio" id="title-no" name="display-title" />
+              <label for="title-no">No</label>
+            </div>
+          </div>
+
+          <div class="cf-form-hint">If section is contained in a collapsible section, this title will be displayed, even if no is checked</div>
+
+        </div>
+
+        <div class="cf-form-field">
+          TEXT EDITOR HERE
+          <div class="cf-form-hint">0 words, 0 characters</div>
+        </div>
+
+        <div class="cf-form-field">
+          <label class="cf-text-dimmed">Wrap Text Around Image</label>
+          <select aria-invalid="true" class="cf-form-input">
+            <option selected>Choose a value</option>
+            <option value="Image Align Right">Image Align Right</option>
+            <option value="Image Align Left">Image Align Left</option>
+          </select>
+        </div>
+
+        <div class="cf-form-field ovHidden">
+          <div class="fRight">
+            <button class="cf-btn-secondary">Cancel</button>
+            <button class="cf-btn-primary success">Save</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div id="add-new-basic-content-buttons">
+      <div class="cf-form-field">
+        <label class="cf-text-dimmed">Add New Content Section</label>
+        <button class="cf-btn-primary">Basic Content</button>
+        <button class="cf-btn-primary">Data Table</button>
+        <button class="cf-btn-primary">Link List</button>
+        <button class="cf-btn-primary">Video</button>
+        <button class="cf-btn-primary">Team Member</button>
+        <button class="cf-btn-primary">Local Content</button>
+      </div>
+    </div>
+
+    <script>
+      // This is the main entry point for extensions.
+      //
+      // The extension API reference explains in detail what you can do with
+      // the 'api' object.
+      var cfExt = window.contentfulExtension || window.contentfulWidget
+      cfExt.init(function (api) {
+
+        // Whenever the size of this document changes we adjust the size of
+        // the IFrame in the Contentful App.
+        api.window.startAutoResizer()
+
+        var metaData = api.entry.getSys()
+        var dropdown = api.field;
+
+        ratingChanged(dropdown.getValue())
+
+        // When the user selects a different option from the dropdown we
+        // update the entry field
+        $('#rating').on('input', function () {
+          dropdown.setValue(parseInt(this.value))
+          $('#current-rating').html(this.value)
+        })
+
+        // When the user clicks the button, we get all entries with the
+        // same rating and show them in a list.
+        $('#entries > button').on('click', function () {
+          var button = $(this)
+
+          button.addClass('is-loading')
+          getEntriesWithSameRating()
+          .then(renderEntries)
+          .then(function () {
+            button.removeClass('is-loading')
+          })
+        })
+
+        // Get a list of entries that have the same content type and same
+        // value in the current field.
+        //
+        // Makes a request to the Contentful CMA using the Widget API
+        function getEntriesWithSameRating () {
+          var query = {
+            'content_type': metaData.contentType.sys.id,
+            'sys.id[ne]': metaData.id
+          }
+          query['fields.' + dropdown.id] = dropdown.getValue()
+
+          return api.space.getEntries(query)
+        }
+
+        function ratingChanged (value) {
+          if (value == null) {
+            $('#current-rating').html('<em>unknown</em>')
+            $('select').val('')
+          } else {
+            $('#current-rating').html(value)
+            $('select').val(value)
+          }
+        }
+
+
+        // Populates the #entries-list with as to the entries.
+        // If 'entries' is an empty array we show a message.
+        function renderEntries (entries) {
+          if (entries.items.length) {
+            var content = entries.items.map(renderEntry)
+          } else {
+            content = '<li><em>no entries found</em></li>'
+          }
+          $('ul#entries-list').html(content)
+        }
+
+        function renderEntry (entry) {
+          var url = entryURL(entry)
+
+          return '<li><a target="_blank" href="' + url + '">' + url + '</a></li>'
+        }
+
+        function entryURL (entry) {
+          var id = entry.sys.id
+          var space = entry.sys.space.sys.id
+
+          return 'https://app.contentful.com/spaces/' + space + '/entries/' + id
+        }
+      })
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js">
+    </script>
+    <style>
+     body { margin: 0; }
+     #entries { margin-top: 1em; }
+     #entries-list { margin-top: 1em; }
+     #rating { margin-right: 1em; }
+    </style>
+</head>
+<body>
+
+  <div id="contain-collapsible-section">
+      <div class="cf-form-field">
+        <label class="cf-text-dimmed">Contain one or more content sections within a collapsible section?</label>
+        <div class="cf-form-horizontal">
+          <div class="cf-form-option">
+            <input
+              type="checkbox"
+              id="option-d"
+            />
+            <label for="option-d">Yes</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="collapsible-section">
+      <div class="cf-form-field">
+        <label class="cf-text-dimmed">COLLAPSIBLE DRAG &amp; DROP HERE</label>
+        <ul id="entries-list"></ul>
+      </div>
+    </div>
+
+    <div id="add-new-basic-content">
+      <form>
+        <label>Add New Basic Section</label>
+        <br />
+        <div class="cf-form-field">
+          <label class="cf-text-dimmed">Section Title <span class="cf-field-error">Required</span></label>
+          <input type="text" value="" class="cf-form-input" aria-invalid="true" />
+          <div class="ovHidden">
+            <div class="cf-form-hint fLeft">0 characters</div>
+            <div class="cf-form-hint fRight">Required less than 256 characters</div>
+          </div>
+        </div>
+
+        <div class="cf-form-field">
+          <label class="cf-text-dimmed">Display Title on Page?</label>
+
+          <div class="cf-form-horizontal">
+            <div class="cf-form-option">
+              <input type="radio" id="title-yes" name="display-title" />
+              <label for="title-yes">Yes</label>
+            </div>
+            <div class="cf-form-option">
+              <input type="radio" id="title-no" name="display-title" />
+              <label for="title-no">No</label>
+            </div>
+          </div>
+
+          <div class="cf-form-hint">If section is contained in a collapsible section, this title will be displayed, even if no is checked</div>
+
+        </div>
+
+        <div class="cf-form-field">
+          TEXT EDITOR HERE
+          <div class="cf-form-hint">0 words, 0 characters</div>
+        </div>
+
+        <div class="cf-form-field">
+          <label class="cf-text-dimmed">Wrap Text Around Image</label>
+          <select aria-invalid="true" class="cf-form-input">
+            <option selected>Choose a value</option>
+            <option value="Image Align Right">Image Align Right</option>
+            <option value="Image Align Left">Image Align Left</option>
+          </select>
+        </div>
+
+        <div class="cf-form-field ovHidden">
+          <div class="fRight">
+            <button class="cf-btn-secondary">Cancel</button>
+            <button class="cf-btn-primary success">Save</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div id="add-new-basic-content-buttons">
+      <div class="cf-form-field">
+        <label class="cf-text-dimmed">Add New Content Section</label>
+        <button class="cf-btn-primary">Basic Content</button>
+        <button class="cf-btn-primary">Data Table</button>
+        <button class="cf-btn-primary">Link List</button>
+        <button class="cf-btn-primary">Video</button>
+        <button class="cf-btn-primary">Team Member</button>
+        <button class="cf-btn-primary">Local Content</button>
+      </div>
+    </div>
+
+<script><%= compilation.assets[htmlWebpackPlugin.files.js[0].substr(htmlWebpackPlugin.files.publicPath.length)].source() %></script>
+</body>
+</html>

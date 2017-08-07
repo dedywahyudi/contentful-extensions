@@ -1,0 +1,6 @@
+{
+  "id": "lilly-module-extension",
+  "name": "Lilly Module Extension",
+  "srcdoc": "./dist/index.html",
+  "fieldTypes": ["Object"]
+}

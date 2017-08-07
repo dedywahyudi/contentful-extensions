@@ -1,0 +1,6 @@
+{
+  "id": "lilly-connect-contentful",
+  "name": "Lilly Connect Contentful",
+  "srcdoc": "./app.html",
+  "fieldTypes": ["Integer", "Number"]
+}
