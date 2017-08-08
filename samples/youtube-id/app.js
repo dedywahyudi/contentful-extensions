@@ -4,6 +4,9 @@ const cfExt = window.contentfulExtension || window.contentfulWidget
 cfExt.init((api) => {
   const $code = $('code')
 
+  Sortable.create($('#simpleList'));
+
+
   api.field.onValueChanged(function (value) {
     $code.text(value || '')
   })
